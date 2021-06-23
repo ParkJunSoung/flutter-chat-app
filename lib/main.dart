@@ -5,15 +5,22 @@ import 'package:chat_app/ui/chat/chat_page.dart';
 import 'package:chat_app/ui/login/login_page.dart';
 import 'package:chat_app/viewmodel/chat_view_model.dart';
 import 'package:chat_app/viewmodel/login_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: ChatViewModel(FakeChatRepository())),
-        ChangeNotifierProvider.value(value: LoginViewModel(FirebaseUserRepository())),
+        ChangeNotifierProvider.value(
+            value: ChatViewModel(FakeChatRepository())),
+        ChangeNotifierProvider.value(
+            value: LoginViewModel(FirebaseUserRepository())),
       ],
       child: MyApp(),
     ),

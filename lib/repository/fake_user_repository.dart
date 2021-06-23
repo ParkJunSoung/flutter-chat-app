@@ -13,7 +13,7 @@ class FakeUserRepository extends UserRepository {
   }
 
   @override
-  void logout() {
+  Future logout() async {
     _user = null;
   }
 

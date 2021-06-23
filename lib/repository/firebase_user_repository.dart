@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class FirebaseUserRepository extends UserRepository {
+
+  GoogleSignIn _googleSignIn = GoogleSignIn();
   @override
   Future<ChatUser?> login() async {
     UserCredential userCredential = await signInWithGoogle();
@@ -11,7 +13,7 @@ class FirebaseUserRepository extends UserRepository {
     if (userCredential.user == null) {
       return null;
     }
-
+    await _googleSignIn.signIn();
     return ChatUser(
         userCredential.user?.email ?? '',
         userCredential.user?.photoURL ?? '',
@@ -19,17 +21,19 @@ class FirebaseUserRepository extends UserRepository {
   }
 
   @override
-  void logout() {
-    // TODO: implement logout
+  Future<void> logout() async{
+    await FirebaseAuth.instance.signOut();
+    await _googleSignIn.disconnect();
+
   }
 
   Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
-    final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+        await googleUser!.authentication;
 
     // Create a new credential
     final credential = GoogleAuthProvider.credential(

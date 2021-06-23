@@ -18,8 +18,9 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   void logout() {
-    isLogin = false;
-    repository.logout();
-    notifyListeners();
+    repository.logout().whenComplete(() {
+      isLogin = false;
+      notifyListeners();
+    });
   }
 }
